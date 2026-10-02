@@ -1,0 +1,11 @@
+# 密钥：只保存在本地，不得提交
+minimax_key.txt
+*.key
+
+# 字体文件体积较大，由 tools/fetch_fonts.sh 下载
+assets/fonts/
+
+# 中间产物（配音缓存、单帧预览、混音文件等）
+build/
+__pycache__/
+*.pyc
