@@ -109,7 +109,8 @@ def sub_chunks(seg):
         txt = c.strip()
         for q in "”’」）》":
             for pnc in "，。、；：":
-                txt = txt.replace(pnc + q, q)
+                txt = txt.replace(pnc + q, q + "  ")
+        txt = txt.rstrip()
         while txt and txt[-1] in "，。、；：":
             txt = txt[:-1]
         for p in "，。、；：":
