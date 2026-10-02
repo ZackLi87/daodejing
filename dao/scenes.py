@@ -171,9 +171,18 @@ class Original(Scene):
         self.items = []     # (列号, 字序, 字, x, y, 时刻)
         si = 0
         last_t = 0.0
+        ctx = p.get("context", {})
+        self.ctx_cols = set(ctx.get("cols", []))
         for ci, col in enumerate(p["columns"]):
             lay, _ = gfx.vlayout(col, self.size, step=1.14, punct_step=0.6)
             x = self.x_right - ci * self.colstep
+            if ci in self.ctx_cols:
+                s = self.seg(ctx["cue"])
+                order = sorted(self.ctx_cols).index(ci)
+                t0 = s.t0 + s.dur * 0.8 * order / len(self.ctx_cols)
+                for k, (ch, dy) in enumerate(lay):
+                    self.items.append((ci, k, ch, x, self.y0 + dy + self.size / 2, t0 + k * 0.06))
+                continue
             for k, (ch, dy) in enumerate(lay):
                 tt = last_t
                 if ch not in PUNCT:
@@ -210,6 +219,8 @@ class Original(Scene):
             a = 1.0
             if focus > 0:
                 a = 1 - 0.62 * focus if gi is None else 1.0
+            if ci in self.ctx_cols:
+                a = min(a, 0.5)
             g = glyph(ch, "kai", self.size, col)
             blit(cv, ink_reveal(g, kk, seed=ci * 31 + k), x, y, a, anchor="mm")
             if gi is not None and ch not in PUNCT and focus > 0:
@@ -284,16 +295,30 @@ class Outro(Scene):
             blit(cv, ink_reveal(g, k, seed=70 + i), self.x, self.y0 + dy + self.size / 2, anchor="mm")
         tv = self.cue(p.get("variant_cue"))
         if tv is not None:
-            idx, ch2, note = p["variant"]
-            ch, dy = self.lay[idx]
-            y = self.y0 + dy + self.size / 2
+            idx, alt, note = p["variant"]
+            a, b = idx if isinstance(idx, tuple) else (idx, idx)
+            ya = self.y0 + self.lay[a][1] + self.size / 2
+            yb = self.y0 + self.lay[b][1] + self.size / 2
+            y = (ya + yb) / 2
             k = fade(t, tv + 0.6, 0.5)
             if k > 0:
-                ring = gfx.circle_mark(int(self.size * 1.35), RED, 4)
+                d = int(self.size * 1.35)
+                ring = gfx.circle_mark(d, RED, 4) if a == b else \
+                    gfx.ring_box(d, int(yb - ya) + d, RED, 4)
                 blit(cv, ring, self.x, y, k, anchor="mm", scale=1 + 0.15 * (1 - k))
             gk = gfx.clamp((t - tv - 1.2) / 1.0)
-            blit(cv, ink_reveal(glyph(ch2, "kai_m", 96, RED), gk, seed=91), self.x + 190, y, anchor="mm")
-            reveal_text(cv, t, tv + 1.6, text(note, "serif", 26, RED, spacing=4), self.x + 190, y + 74, anchor="mt")
+            if len(alt) == 1:
+                blit(cv, ink_reveal(glyph(alt, "kai_m", 96, RED), gk, seed=91), self.x + 190, y, anchor="mm")
+                ny = y + 74
+            else:
+                sz = 72
+                y1 = y - sz * 1.08 * len(alt) / 2
+                for j, ch in enumerate(alt):
+                    kk = gfx.clamp((t - tv - 1.2 - j * 0.15) / 0.8)
+                    blit(cv, ink_reveal(glyph(ch, "kai_m", sz, RED), kk, seed=91 + j), self.x + 175,
+                         y1 + (j + 0.5) * sz * 1.08, anchor="mm")
+                ny = y1 + len(alt) * sz * 1.08 + 16
+            reveal_text(cv, t, tv + 1.6, text(note, "serif", 26, RED, spacing=4), self.x + 175, ny, anchor="mt")
         tc = self.cue(p.get("cta_cue"))
         if tc is not None:
             for j, line in enumerate(p["cta"]):

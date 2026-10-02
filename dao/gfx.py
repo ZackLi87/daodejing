@@ -167,7 +167,8 @@ def ink_reveal(im, p, seed=0, soft=0.25):
 
 # ---------- 宣纸底 ----------
 
-def make_paper(seed=7):
+def make_paper(seed=7, w=W, h=H):
+    W, H = w, h  # noqa: N806  （封面等其他画幅）
     rng = np.random.default_rng(seed)
     base = np.array(PAPER, np.float32)
 
@@ -185,7 +186,7 @@ def make_paper(seed=7):
     # 纤维
     fib = Image.new("L", (W, H), 0)
     d = ImageDraw.Draw(fib)
-    for _ in range(1400):
+    for _ in range(int(1400 * W * H / (1920 * 1080))):
         x, y = rng.random() * W, rng.random() * H
         ang = rng.random() * math.pi
         ln = 6 + rng.random() * 26
@@ -289,6 +290,18 @@ def circle_mark(d, color=RED, width=3):
                                outline=255, width=width * sc)
     a = im.resize((d, d), Image.LANCZOS)
     out = Image.new("RGBA", (d, d), color + (0,))
+    out.putalpha(a)
+    return out
+
+
+def ring_box(w, h, color=RED, width=3):
+    """竖长的圆角环（圈出连续数字）。"""
+    sc = 4
+    im = Image.new("L", (w * sc, h * sc), 0)
+    ImageDraw.Draw(im).rounded_rectangle((width * sc, width * sc, w * sc - width * sc, h * sc - width * sc),
+                                         radius=w * sc / 2 - width * sc, outline=255, width=width * sc)
+    a = im.resize((w, h), Image.LANCZOS)
+    out = Image.new("RGBA", (w, h), color + (0,))
     out.putalpha(a)
     return out
 

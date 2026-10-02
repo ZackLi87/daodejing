@@ -3,12 +3,20 @@ from dao.config import QUOTE_SPEED as Q
 from dao.engine import S, Shot
 from dao.scenes import Hook, Original, Outro, Summary, Title
 
-from .scenes import Contrast, Seven, WaterLow
+from .scenes import Contrast, Seven, WaterLow, cover_art
 
 META = {
     "num": "01",
     "slug": "上善若水",
     "out": "道德经细读01_上善若水",
+}
+
+COVER = {
+    "title": "上善若水",
+    "question": ["只是教人", "柔顺吗？"],
+    "info": "《道德经》第八章 · 三层常被忽略的含义",
+    "seal": "老子",
+    "art": cover_art,
 }
 
 # 古文读音校正（MiniMax pronunciation_dict）

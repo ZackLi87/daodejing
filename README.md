@@ -16,6 +16,7 @@ dao/                 渲染引擎
   engine.py          时间轴、字幕切分、逐帧合成
   scenes.py          通用场景：开篇、片名、原文竖排、小结、片尾
   build.py           构建入口
+  cover.py           封面（横版 4:3、竖版 3:4）
 episodes/epNN/
   script.py          本期旁白与画面参数
   scenes.py          本期专用插图场景
@@ -23,7 +24,7 @@ episodes/epNN/
 tools/
   minimax_tts.py     MiniMax 语音合成脚本
   fetch_fonts.sh     下载字体
-output/epNN/         成片（.mp4）、字幕（.srt）、旁白文稿、视频信息
+output/epNN/         成片（.mp4）、封面、字幕（.srt）、旁白文稿、视频信息
 ```
 
 ## 使用
@@ -37,6 +38,7 @@ python3 -m dao.build ep01 --still 20 60     # 渲染单帧检查版面，输出�
 python3 -m dao.build ep01                   # 生成成片
 python3 -m dao.build ep01 --voice "Chinese (Mandarin)_Gentleman"   # 更换音色
 python3 -m dao.build ep01 --no-bgm          # 不加背景琴音
+python3 -m dao.cover ep01                   # 封面：横版 4:3（1440×1080）、竖版 3:4（1080×1440）
 ```
 
 配音逐句缓存在 `build/tts/`，修改画面后重新渲染不会重复计费；只有改动的句子会重新合成。

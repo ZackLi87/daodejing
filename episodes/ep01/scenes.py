@@ -278,3 +278,12 @@ class Contrast(Scene):
             if k > 0:
                 blit(cv, gfx.rounded_box(6, 60, fill=RED + (255,), radius=3), 180, 772, k)
             reveal_text(cv, t, tm + 0.15, text(p["modern"], "kai", 40, INK2), 208, 766)
+
+
+def cover_art():
+    """封面插图：满水位的山势剖面。"""
+    s = WaterLow.__new__(WaterLow)
+    s.setup()
+    im = s.hill.copy()
+    im.alpha_composite(s.water_layer(1.3, 1.0, 1.0))
+    return im
