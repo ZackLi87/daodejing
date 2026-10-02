@@ -231,7 +231,7 @@ class Original(Scene):
         for ci, ch, py in p.get("pinyin", []):
             for cj, k, c2, x, y, tt in self.items:
                 if cj == ci and c2 == ch:
-                    blit(cv, text(py, "serif", 23, RED), x + self.size * 0.52, y, fade(t, tt + 0.5, 0.5), anchor="lm")
+                    blit(cv, text(py, "serif", 21, RED), x + self.size * 0.5, y, fade(t, tt + 0.5, 0.5), anchor="lm")
                     break
         # 要点编号与提要
         if focus > 0:

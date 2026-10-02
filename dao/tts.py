@@ -82,9 +82,13 @@ def trim(x, thresh=-42, keep=0.04):
 def clauses(s):
     """按句读切分：返回 [(分句文字, 有效字数)]。"""
     out, cur = [], ""
-    for ch in s:
+    for i, ch in enumerate(s):
         cur += ch
-        if ch in CLAUSE_END:
+        # 句读后紧跟的后引号、后括号归入本分句
+        if ch in CLAUSE_END and (i + 1 >= len(s) or s[i + 1] not in "”’」）》"):
+            out.append(cur)
+            cur = ""
+        elif ch in "”’」）》" and cur[-2:-1] in CLAUSE_END and cur[-2:-1]:
             out.append(cur)
             cur = ""
     if cur.strip("”’」）》 "):
