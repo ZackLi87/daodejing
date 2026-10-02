@@ -102,7 +102,7 @@ def main():
     n = int(total * C.FPS)
     cmd = ["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{C.W}x{C.H}",
            "-r", str(C.FPS), "-i", "-", "-i", str(wav), "-map", "0:v", "-map", "1:a",
-           "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p",
+           "-c:v", "libx264", "-preset", "slow", "-crf", "22", "-pix_fmt", "yuv420p",
            "-af", "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "44100", "-c:a", "aac", "-b:a", "192k",
            "-movflags", "+faststart", "-shortest", str(mp4)]
     enc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
